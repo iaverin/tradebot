@@ -1,0 +1,1 @@
+ALTER TABLE arbitrage_events_markets_info DROP COLUMN IF EXISTS datasource;

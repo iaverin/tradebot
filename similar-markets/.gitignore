@@ -1,0 +1,7 @@
+.venv
+.pycache
+.python-version
+**/__pycache__/
+.ruff_cache
+model_cache
+.coverage

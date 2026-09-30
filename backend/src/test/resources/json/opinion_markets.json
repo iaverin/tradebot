@@ -1,0 +1,162 @@
+[
+  {
+    "chainId": "56",
+    "childMarkets": [
+      {
+        "chainId": "56",
+        "conditionId": "",
+        "createdAt": 1782453406,
+        "cutoffAt": 1782950400,
+        "isResolvableByAI": false,
+        "marketId": 20838,
+        "marketTitle": "USA wins",
+        "noLabel": "NO",
+        "noTokenId": "63773502880661331999872129643484781779985354362376623953045352995697498045816",
+        "questionId": "551071f2fb3353d73eab14ebc230d4c2fbaac468b3744138d1be3a8074234c72",
+        "quoteToken": "0x55d398326f99059fF775485246999027B3197955",
+        "rebate": {
+          "maker": 0.5
+        },
+        "resolvedAt": 0,
+        "resultTokenId": "",
+        "rules": "Resolves Yes if USA wins the match. Resolves No otherwise, including draws where applicable.",
+        "slug": "usa-vs-bosnia-and-herzegovina-usa-wins",
+        "status": 2,
+        "statusEnum": "Activated",
+        "volume": "0",
+        "yesLabel": "YES",
+        "yesTokenId": "43306382391961050607973156632738521417289688693013075781745411714409585871551"
+      },
+      {
+        "chainId": "56",
+        "conditionId": "",
+        "createdAt": 1782453407,
+        "cutoffAt": 1782950400,
+        "isResolvableByAI": false,
+        "marketId": 20839,
+        "marketTitle": "Bosnia & Herzegovina wins",
+        "noLabel": "NO",
+        "noTokenId": "30086671156929442578568963485164592426037661579571695111740927414203713988123",
+        "questionId": "afa72e0b5977de7569ad20038ce0d5089425e5ff06cbd22d2d2746531bc375e3",
+        "quoteToken": "0x55d398326f99059fF775485246999027B3197955",
+        "rebate": {
+          "maker": 0.5
+        },
+        "resolvedAt": 0,
+        "resultTokenId": "",
+        "rules": "Resolves Yes if Bosnia & Herzegovina wins the match. Resolves No otherwise, including draws where applicable.",
+        "slug": "usa-vs-bosnia-and-herzegovina-bosnia-and-herzegovina-wins",
+        "status": 2,
+        "statusEnum": "Activated",
+        "volume": "0",
+        "yesLabel": "YES",
+        "yesTokenId": "86295310515008229767604673053432272554137603807765088423933926226129632242231"
+      },
+      {
+        "chainId": "56",
+        "conditionId": "",
+        "createdAt": 1782453408,
+        "cutoffAt": 1782950400,
+        "isResolvableByAI": false,
+        "marketId": 20840,
+        "marketTitle": "Draw",
+        "noLabel": "NO",
+        "noTokenId": "90529278027781572899114808991133739178307080885742960111315094268336026984698",
+        "questionId": "ee87844e006e4cd30c708fd3c2e9356c9f1e68b927b15417b513c2a79a3c2dff",
+        "quoteToken": "0x55d398326f99059fF775485246999027B3197955",
+        "rebate": {
+          "maker": 0.5
+        },
+        "resolvedAt": 0,
+        "resultTokenId": "",
+        "rules": "Resolves Yes if the match ends in a draw after regular time. Resolves No if either team wins. Does not apply in competitions where draws are not possible.",
+        "slug": "usa-vs-bosnia-and-herzegovina-draw",
+        "status": 2,
+        "statusEnum": "Activated",
+        "volume": "0",
+        "yesLabel": "YES",
+        "yesTokenId": "42607184327520573775812011347998575244901005004162914531510655709287482777570"
+      }
+    ],
+    "conditionId": "",
+    "coverUrl": "",
+    "createdAt": 1782453406,
+    "cutoffAt": 1782950400,
+    "isResolvableByAI": false,
+    "labelIds": [
+      8,
+      100015,
+      100019
+    ],
+    "labels": [
+      "Sports",
+      "Soccer",
+      "FIFA World Cup"
+    ],
+    "marketId": 1112,
+    "marketTitle": "USA vs Bosnia & Herzegovina",
+    "marketType": 1,
+    "noLabel": "",
+    "noTokenId": "",
+    "questionId": "",
+    "quoteToken": "0x55d398326f99059fF775485246999027B3197955",
+    "rebate": {
+      "maker": 0.5
+    },
+    "resolvedAt": 0,
+    "resultTokenId": "",
+    "rules": "This market refers to the FIFA World Cup match between USA (USA) and Bosnia & Herzegovina (BIH), scheduled for 2026-07-02 00:00 UTC.\n\n- USA: If USA wins, the outcome is settled as \"Yes\"; otherwise \"No\".\n\n- DRAW: If the match ends in a draw, the outcome is \"Yes\".\n\n- BIH: If Bosnia & Herzegovina wins, the outcome is \"Yes\"; otherwise \"No\".\n\nSettlement will be based on the result at the end of regular time (90 minutes) plus stoppage time.\n\nIf the match is postponed, this market will remain open until the match is played and completed. If the game is canceled entirely, with no make-up game, the DRAW option will resolve to \"Yes\", while both USA and BIH options will resolve to \"No\".\n\nThe primary settlement source will be the official result published by FIFA World Cup.\n\nIf the governing body or event organizers have not published the final match statistics within 2 hours after the event's conclusion, a consensus from credible sources may be used instead.\n\nNote: Opinion will resolve strictly based on the first officially published result from the designated source. Any subsequent revisions will not affect this resolution.\nSource: https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/canadamexicousa2026",
+    "slug": "usa-vs-bosnia-and-herzegovina",
+    "status": 2,
+    "statusEnum": "Activated",
+    "thumbnailUrl": "https://images.opinion.trade/0x18f63f20eead237c83ff75bb7bd2028006fef79d/0xdac691b91e841102ebc69ab7a2cd47989e3501fba062c2ba0592ae82193e82aa",
+    "volume": "0.000000000000000000",
+    "volume24h": "0.000000000000000000",
+    "volume7d": "0.000000000000000000",
+    "yesLabel": "",
+    "yesTokenId": ""
+  },
+  {
+    "chainId": "56",
+    "childMarkets": null,
+    "conditionId": "",
+    "coverUrl": "",
+    "createdAt": 1782472303,
+    "cutoffAt": 1782727200,
+    "isResolvableByAI": false,
+    "labelIds": [
+      8,
+      100025,
+      100026
+    ],
+    "labels": [
+      "Sports",
+      "Tennis",
+      "WTA"
+    ],
+    "marketId": 20912,
+    "marketTitle": "Xinyu Wang vs Elisabetta Cocciaretto",
+    "marketType": 0,
+    "noLabel": "Elisabetta Cocciaretto",
+    "noLabelShort": "COCC",
+    "noTokenId": "26826191409710877853930766172994944923372292602790248929760059615911472055104",
+    "questionId": "8a4dc9713da449f76e5b81b7d0fbf7ec1801a526247b4b0ad03dd8dd7802ef4a",
+    "quoteToken": "0x55d398326f99059fF775485246999027B3197955",
+    "rebate": {
+      "maker": 0.5
+    },
+    "resolvedAt": 0,
+    "resultTokenId": "",
+    "rules": "In the upcoming WTA singles match scheduled for 2026-06-29 10:00 UTC: if Xinyu Wang wins the match, this market resolves to \"Xinyu Wang\"; if Elisabetta Cocciaretto wins, it resolves to \"Elisabetta Cocciaretto\". The winner is the first player to claim the required number of sets under the match's official best-of format.\n\nIf the match begins but is not completed, a retirement or default counts the opposing player as the winner. If a walkover is declared before the first point is played, the match is outright canceled, or it is delayed beyond 7 days from the scheduled date without a winner determined, this market will resolve to 50-50.\n\nSuspensions caused by weather, fading light, or other tournament-imposed delays do not close this market — it stays open until the match is officially completed, provided it concludes within the 7-day window mentioned above.\n\nResolution Source: The official WTA Tour scoring page.\n\nNote: This market will resolve strictly based on the first officially published result from the designated source. Any subsequent revisions will not affect this resolution.",
+    "slug": "xinyu-wang-vs-elisabetta-cocciaretto",
+    "status": 2,
+    "statusEnum": "Activated",
+    "thumbnailUrl": "",
+    "volume": "0",
+    "volume24h": "0",
+    "volume7d": "0",
+    "yesLabel": "Xinyu Wang",
+    "yesLabelShort": "WANG",
+    "yesTokenId": "80372730988234898967908691380911708889691980407591071428160407765539232121820"
+  }
+]

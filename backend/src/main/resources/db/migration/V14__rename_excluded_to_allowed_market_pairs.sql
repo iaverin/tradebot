@@ -1,0 +1,1 @@
+ALTER TABLE excluded_market_pairs RENAME TO allowed_market_pairs;

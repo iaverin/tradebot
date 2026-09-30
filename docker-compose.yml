@@ -1,0 +1,126 @@
+include:
+  - docker-compose.temporal.yml
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: trading-desk-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=trading_desk
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    profiles:
+      - manual
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: auth-backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./backend/.env
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/trading_desk
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - TEMPORAL_TARGET_ENDPOINT=${TEMPORAL_ADDRESS:-temporal:7233}
+      - TEMPORAL_NAMESPACE=${TEMPORAL_NAMESPACE:-default}
+      - JAVA_TOOL_OPTIONS=-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    networks:
+      - app-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      temporal:
+        condition: service_started
+    extra_hosts:
+      - "ws-subscriptions-clob.polymarket.com:8.6.112.6"
+    # healthcheck:
+    #   test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/api/auth/login"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 5
+    #   start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - BACKEND_BASEURL=http://localhost:8080
+    container_name: auth-frontend
+    ports:
+      - "80:80"
+    # depends_on:
+    #   backend:
+    #     condition: service_healthy
+    networks:
+      - app-network
+
+  similar-markets-worker:
+    build:
+      context: ./similar-markets
+      dockerfile: ./Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      # migration-similar-markets:
+      #   condition: service_completed_successfully
+      temporal:
+        condition: service_started
+    networks:
+      - app-network
+    environment:
+      - SERVICE_DEBUG=false
+      - LOG_LEVEL=INFO
+      - SERVICE_ENVIRONMENT=ci
+      - DB_DSN=postgresql+asyncpg://postgres:postgres@postgres:5432/trading_desk
+      - TEMPORAL_HOST=temporal:7233
+      - TEMPORAL_NAMESPACE=${TEMPORAL_NAMESPACE:-default}
+      - TEMPORAL_TASK_QUEUE=similar-markets
+      - SIMILAR_EVENTS_SELECT_EVENTS_CLOSE_DATE_AFTER_DAYS=150
+    entrypoint: ""
+    command:
+      ["uv", "run", "python", "-m", "app.temporal.worker"]
+
+  # migration-similar-markets:
+  #   build:
+  #     context: ./similar-markets
+  #     dockerfile: ./Dockerfile
+  #   environment:
+  #     - DB_DSN=postgresql+asyncpg://postgres:postgres@postgres/trading_desk
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   entrypoint: ""
+  #   command:
+  #     ["uv", "run", "alembic", "upgrade", "head"]
+  #   networks:
+  #     - app-network
+
+
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+    driver: local

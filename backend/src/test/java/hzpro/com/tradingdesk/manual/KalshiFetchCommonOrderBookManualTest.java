@@ -1,0 +1,139 @@
+package hzpro.com.tradingdesk.manual;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import hzpro.com.tradingdesk.arbitrage.config.ArbitrageConfig;
+import hzpro.com.tradingdesk.arbitrage.service.KalshiFetchCommonOrderBookService;
+import hzpro.com.tradingdesk.client.KalshiAuthorizedClient;
+import hzpro.com.tradingdesk.client.config.HttpClientWithHttpsProxyConfig;
+import hzpro.com.tradingdesk.config.ProxyConfig;
+import hzpro.com.tradingdesk.domain.enums.YesOrNoResult;
+import hzpro.com.tradingdesk.domain.orderbook.OrderBook;
+import hzpro.com.tradingdesk.entity.PredictionMarket;
+import hzpro.com.tradingdesk.entity.enums.DataSource;
+import hzpro.com.tradingdesk.repository.PredictionMarketRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@SpringBootTest
+@ActiveProfiles("test")
+@DisplayName("KalshiFetchCommonOrderBookService Tests")
+@Slf4j
+class KalshiFetchCommonOrderBookManualTest {
+
+    @MockitoBean
+    private CloseableHttpClient httpClient;
+
+    @MockitoBean
+    private PredictionMarketRepository predictionMarketRepository;
+
+    @Autowired
+    private KalshiFetchCommonOrderBookService service;
+
+    @Autowired
+    private ArbitrageConfig arbitrageConfig;
+
+    @Autowired
+    private ProxyConfig proxyConfig;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private ClassicHttpResponse httpResponse;
+    private String mockResponse;
+    private PredictionMarket mockMarket;
+
+    private static final String MARKET_TICKER = "KXTEST-99XYZ-T50";
+
+    @BeforeEach
+    void setUp() throws Exception {
+        httpResponse = mock(ClassicHttpResponse.class);
+        mockResponse = Files.readString(
+                Paths.get(getClass().getClassLoader().getResource("json/kalshi_orderbook.json").toURI()));
+
+        mockMarket = PredictionMarket.builder()
+                .datasource(DataSource.KALSHI)
+                .marketTicker(MARKET_TICKER)
+                .build();
+    }
+
+
+    /**
+     * Manual integration test — hits the real Kalshi REST endpoint for ticker
+     * {@code KXTOPMONTHLY-26MAY-BRU}. Excluded from the default {@code ./gradlew test}
+     * task by the {@code @Tag("manual")} marker; run via {@code ./gradlew manualTest}.
+     *
+     * <p>This test bypasses the class-level {@code @MockitoBean CloseableHttpClient} by
+     * building its own real HTTP client (honoring {@link ProxyConfig}) and constructing
+     * fresh {@link KalshiAuthorizedClient} + {@link KalshiFetchCommonOrderBookService}
+     * instances. The {@link PredictionMarketRepository} mock is stubbed to return a
+     * stand-in {@link PredictionMarket} so the service proceeds to the real REST call.
+     */
+    @Test
+    @Tag("manual")
+    @DisplayName("MANUAL: fetch real Kalshi orderbook for KXTOPMONTHLY-26MAY-BRU")
+    void manualTestRealKalshiOrderBook() throws Exception {
+        final String realTicker = "KXGDP-26JUL30-T2.0";
+
+        PredictionMarket realMarket = PredictionMarket.builder()
+                .datasource(DataSource.KALSHI)
+                .marketTicker(realTicker)
+                .build();
+        when(predictionMarketRepository
+                .findFirstByMarketTickerAndDatasourceOrderByCreatedAtDesc(realTicker, DataSource.KALSHI))
+                .thenReturn(Optional.of(realMarket));
+
+        // Build a real HTTP client locally so we sidestep the @MockitoBean override.
+        CloseableHttpClient realHttpClient = new HttpClientWithHttpsProxyConfig(proxyConfig).httpClient();
+        try {
+            KalshiAuthorizedClient realAuthClient =
+                    new KalshiAuthorizedClient(realHttpClient, arbitrageConfig, objectMapper);
+            // @PostConstruct does not fire on manually-instantiated beans — invoke it.
+            realAuthClient.init();
+
+            KalshiFetchCommonOrderBookService realService =
+                    new KalshiFetchCommonOrderBookService(realAuthClient, objectMapper);
+
+            OrderBook yesBook = realService.fetchCommonOrderBook(realTicker, YesOrNoResult.YES);
+            OrderBook noBook = realService.fetchCommonOrderBook(realTicker, YesOrNoResult.NO);
+
+            assertThat(yesBook != null || noBook != null)
+                    .withFailMessage("Both YES and NO orderbooks were null — likely a network/auth issue or invalid ticker")
+                    .isTrue();
+
+            // Every ask price must be a valid probability in (0, 1] (asks are 1 - bid_price,
+            // bids are in [0, 1)).
+            if (yesBook != null) {
+                yesBook.asks().forEach(e -> assertThat(e.price())
+                        .isBetween(BigDecimal.ZERO, BigDecimal.ONE));
+            }
+            if (noBook != null) {
+                noBook.asks().forEach(e -> assertThat(e.price())
+                        .isBetween(BigDecimal.ZERO, BigDecimal.ONE));
+            }
+        } finally {
+            realHttpClient.close();
+        }
+    }
+}

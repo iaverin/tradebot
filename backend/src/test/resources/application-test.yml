@@ -1,0 +1,20 @@
+# Test configuration using Testcontainers with PostgreSQL
+
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:16-alpine:///testdb?TC_TMPFS=/testtmp:rw&TC_REUSABLE=true
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    username: test
+    password: test
+
+temporal:
+  enabled: false
+
+portfolio:
+  positions:
+    scheduling-enabled: false
+
+logging:
+  level:
+    org.testcontainers: INFO
+    org.hibernate.SQL: DEBUG

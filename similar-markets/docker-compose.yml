@@ -1,0 +1,67 @@
+services:
+  application:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: always
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+    profiles:
+      - manual
+    networks:
+      - similar-markets-network
+
+    environment:
+      - SERVICE_DEBUG=true
+      - SERVICE_ENVIRONMENT=ci
+      - DB_DSN=postgresql+asyncpg://postgres:postgres@db/postgres
+    entrypoint: ""
+    # deprecated service
+    # command:
+    #   ["uv", "run", "python", "-m", "app"]
+
+  migration:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      - SERVICE_DEBUG=true
+      - SERVICE_ENVIRONMENT=ci
+      - DB_DSN=postgresql+asyncpg://postgres:postgres@db/postgres
+
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: ""
+    command:
+      ["uv", "run", "alembic", "upgrade", "head"]
+    networks:
+      - similar-markets-network
+
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 1s
+      timeout: 5s
+      retries: 15
+    ports:
+      - "5432:5432"
+    networks:
+      - similar-markets-network
+
+
+networks:
+  similar-markets-network:
+    driver: bridge

@@ -1,0 +1,8 @@
+-- Rename prediction_markets table to fetching_prediction_markets
+ALTER TABLE prediction_markets RENAME TO fetching_prediction_markets;
+
+-- Rename indexes (with existence checks)
+ALTER INDEX IF EXISTS idx_prediction_markets_datasource RENAME TO idx_fetching_prediction_markets_datasource;
+ALTER INDEX IF EXISTS idx_prediction_markets_event_id RENAME TO idx_fetching_prediction_markets_event_id;
+ALTER INDEX IF EXISTS idx_prediction_markets_market_open_datetime RENAME TO idx_fetching_prediction_markets_market_open_datetime;
+ALTER INDEX IF EXISTS idx_prediction_markets_market_close_datetime RENAME TO idx_fetching_prediction_markets_market_close_datetime;

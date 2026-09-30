@@ -1,0 +1,49 @@
+.env
+# Gradle
+.gradle/
+.build/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Maven (legacy)
+target/
+.mvn/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Spring Boot
+spring-boot-run/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+bin/
+out/
+
+# Logs
+*.log
+logs/
+
+# H2 Database files
+*.db
+*.trace.db
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Application properties with secrets (if any)
+application-*.properties
+!application.properties
+
+# Environment variables
+.env.local
+.env.*.local
